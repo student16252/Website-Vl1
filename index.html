@@ -18,7 +18,6 @@
             overflow-x: hidden;
         }
 
-        /* Scroll Progress Bar */
         .progress-bar {
             position: fixed;
             top: 0;
@@ -26,10 +25,10 @@
             height: 4px;
             background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
             z-index: 9999;
+            width: 0%;
             transition: width 0.2s;
         }
 
-        /* Header mit Sticky Navigation */
         header {
             background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
             color: white;
@@ -38,12 +37,6 @@
             top: 0;
             z-index: 1000;
             box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-            transition: all 0.3s;
-        }
-
-        header.scrolled {
-            padding: 1rem 0;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
         }
 
         .container {
@@ -115,7 +108,6 @@
             width: 100%;
         }
 
-        /* Mobile Menu Button */
         .menu-toggle {
             display: none;
             background: none;
@@ -125,7 +117,6 @@
             cursor: pointer;
         }
 
-        /* Hero Section mit Hintergrundbild */
         .hero {
             position: relative;
             background: linear-gradient(135deg, rgba(102, 126, 234, 0.9) 0%, rgba(118, 75, 162, 0.9) 100%),
@@ -133,23 +124,6 @@
             color: white;
             padding: 8rem 0;
             text-align: center;
-            overflow: hidden;
-        }
-
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.85) 0%, rgba(118, 75, 162, 0.85) 100%);
-            animation: pulse 8s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 0.85; }
-            50% { opacity: 0.95; }
         }
 
         .hero-content {
@@ -166,7 +140,6 @@
         .hero p {
             font-size: 1.3rem;
             margin-bottom: 2rem;
-            opacity: 0.95;
             animation: fadeInUp 1s ease-out 0.2s backwards;
         }
 
@@ -217,35 +190,34 @@
             color: #667eea;
         }
 
-        /* Video Section */
         .video-section {
-            padding: 4rem 0;
+            padding: 5rem 0;
             background: #f8f9fa;
         }
 
-        .video-container {
+        .video-wrapper {
             max-width: 900px;
             margin: 2rem auto;
             border-radius: 15px;
             overflow: hidden;
             box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            background: #000;
             position: relative;
             padding-bottom: 56.25%;
             height: 0;
         }
 
-        .video-container iframe {
+        .video-wrapper iframe {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
+            border: none;
         }
 
-        /* Section Styles */
         .section {
             padding: 5rem 0;
-            position: relative;
         }
 
         .section-alt {
@@ -269,7 +241,6 @@
             margin-right: auto;
         }
 
-        /* Image Grid */
         .image-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -284,6 +255,7 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             transition: all 0.3s;
             cursor: pointer;
+            height: 300px;
         }
 
         .image-card:hover {
@@ -293,7 +265,7 @@
 
         .image-card img {
             width: 100%;
-            height: 250px;
+            height: 100%;
             object-fit: cover;
             transition: transform 0.3s;
         }
@@ -307,20 +279,15 @@
             bottom: 0;
             left: 0;
             right: 0;
-            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            background: linear-gradient(to top, rgba(0,0,0,0.9), rgba(0,0,0,0.3));
             color: white;
             padding: 2rem 1.5rem 1.5rem;
-            transform: translateY(0);
-            transition: transform 0.3s;
-        }
-
-        .image-card:hover .image-overlay {
-            transform: translateY(0);
         }
 
         .image-overlay h3 {
             font-size: 1.3rem;
             margin-bottom: 0.5rem;
+            color: white;
         }
 
         .image-overlay p {
@@ -328,7 +295,6 @@
             opacity: 0.9;
         }
 
-        /* Features Grid */
         .features {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -354,17 +320,6 @@
             font-size: 3.5rem;
             margin-bottom: 1rem;
             display: inline-block;
-            animation: bounce 2s infinite;
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-
-        .feature-card:hover .feature-icon {
-            animation: none;
-            transform: scale(1.2);
         }
 
         .feature-card h3 {
@@ -373,7 +328,6 @@
             font-size: 1.3rem;
         }
 
-        /* Interactive Timeline */
         .timeline {
             position: relative;
             max-width: 1000px;
@@ -420,6 +374,11 @@
             transform: scale(1.05);
         }
 
+        .timeline-content h3 {
+            color: #1e3c72;
+            margin-bottom: 0.5rem;
+        }
+
         .timeline-icon {
             position: absolute;
             left: 50%;
@@ -434,10 +393,9 @@
             justify-content: center;
             font-size: 1.5rem;
             color: white;
-            box-shadow: 0 0 0 4px #f8f9fa;
+            box-shadow: 0 0 0 4px #fff;
         }
 
-        /* Accordion FAQ */
         .accordion {
             max-width: 800px;
             margin: 3rem auto;
@@ -479,7 +437,7 @@
         .accordion-content {
             max-height: 0;
             overflow: hidden;
-            transition: max-height 0.3s ease-out, padding 0.3s;
+            transition: max-height 0.3s ease-out;
             padding: 0 1.5rem;
         }
 
@@ -488,7 +446,6 @@
             padding: 0 1.5rem 1.5rem;
         }
 
-        /* Stats Counter */
         .stats {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -525,7 +482,6 @@
             font-size: 1.1rem;
         }
 
-        /* Testimonials Slider */
         .testimonials {
             position: relative;
             max-width: 900px;
@@ -626,7 +582,6 @@
             border-radius: 5px;
         }
 
-        /* Contact Form */
         .contact-form {
             max-width: 600px;
             margin: 3rem auto;
@@ -690,7 +645,6 @@
             box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
         }
 
-        /* Back to Top Button */
         .back-to-top {
             position: fixed;
             bottom: 2rem;
@@ -720,7 +674,6 @@
             box-shadow: 0 6px 20px rgba(0,0,0,0.3);
         }
 
-        /* Footer */
         footer {
             background: #1e3c72;
             color: white;
@@ -769,6 +722,8 @@
             align-items: center;
             justify-content: center;
             transition: all 0.3s;
+            text-decoration: none;
+            color: white;
         }
 
         .social-link:hover {
@@ -784,7 +739,38 @@
             color: rgba(255,255,255,0.6);
         }
 
-        /* Responsive Design */
+        .topics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 3rem;
+        }
+
+        .topic-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-left: 4px solid #667eea;
+            transition: all 0.3s;
+        }
+
+        .topic-card:hover {
+            transform: translateX(10px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .topic-card h3 {
+            color: #1e3c72;
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .topic-card p {
+            color: #666;
+            line-height: 1.6;
+        }
+
         @media (max-width: 768px) {
             .header-content {
                 flex-direction: column;
@@ -843,10 +829,8 @@
     </style>
 </head>
 <body>
-    <!-- Scroll Progress Bar -->
     <div class="progress-bar" id="progressBar"></div>
 
-    <!-- Header -->
     <header id="header">
         <div class="container">
             <div class="header-content">
@@ -872,7 +856,6 @@
         </div>
     </header>
 
-    <!-- Hero Section -->
     <section class="hero" id="home">
         <div class="hero-content">
             <div class="container">
@@ -886,18 +869,16 @@
         </div>
     </section>
 
-    <!-- Video Section -->
     <section class="video-section">
         <div class="container">
             <h2>Einblick in die Informationsverarbeitung</h2>
             <p class="section-subtitle">Erfahren Sie mehr über die spannenden Möglichkeiten in unserem Fachbereich</p>
-            <div class="video-container">
-                <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            <div class="video-wrapper">
+                <iframe src="https://www.youtube.com/embed/RH0o-QjnwDg" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
             </div>
         </div>
     </section>
 
-    <!-- About Section with Images -->
     <section id="about" class="section">
         <div class="container">
             <h2>Warum Informationsverarbeitung?</h2>
@@ -928,10 +909,10 @@
         </div>
     </section>
 
-    <!-- Features Section -->
     <section class="section section-alt">
         <div class="container">
             <h2>Ihre Vorteile</h2>
+            <p class="section-subtitle">Diese Benefits erwarten Sie im Studiengang Informationsverarbeitung</p>
             <div class="features">
                 <div class="feature-card">
                     <div class="feature-icon">💡</div>
@@ -967,7 +948,17 @@
         </div>
     </section>
 
-    <!-- Timeline Section -->
-    <section id="studium" class="section">
+    <section id="inhalte" class="section">
         <div class="container">
-            <h2>Ihr Studienweg</h
+            <h2>Studieninhalte</h2>
+            <p class="section-subtitle">Diese spannenden Themen erwarten Sie im Fach Informationsverarbeitung</p>
+            <div class="topics-grid">
+                <div class="topic-card">
+                    <h3>📊 Business Intelligence</h3>
+                    <p>Datengetriebene Entscheidungen treffen durch moderne BI-Tools und Dashboards</p>
+                </div>
+                <div class="topic-card">
+                    <h3>💾 Datenbanken</h3>
+                    <p>Design und Management relationaler und NoSQL-Datenbanksysteme</p>
+                </div>
+                <div class
