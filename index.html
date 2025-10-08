@@ -1,213 +1,1651 @@
+```html
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <title>Simple Pong Game</title>
-  <style>
-    body {
-      background: #222;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-      color: #fff;
-      font-family: Arial, sans-serif;
-    }
-    #pongCanvas {
-      background: #111;
-      display: block;
-      border: 2px solid #fff;
-    }
-    #scoreboard {
-      text-align: center;
-      font-size: 24px;
-      margin-bottom: 10px;
-      letter-spacing: 10px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Future City - Die smarte Stadt der Zukunft</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* ============================================
+           GLOBAL STYLES & RESET
+        ============================================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0e27;
+            --bg-secondary: #151b3d;
+            --bg-card: #1a2147;
+            --text-primary: #ffffff;
+            --text-secondary: #b8c1ec;
+            --accent-primary: #00d4ff;
+            --accent-secondary: #7b2ff7;
+            --accent-gradient: linear-gradient(135deg, #00d4ff 0%, #7b2ff7 100%);
+            --shadow: 0 10px 40px rgba(0, 212, 255, 0.2);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        [data-theme="light"] {
+            --bg-primary: #f5f7fa;
+            --bg-secondary: #ffffff;
+            --bg-card: #ffffff;
+            --text-primary: #1a2147;
+            --text-secondary: #4a5568;
+            --accent-primary: #0099cc;
+            --accent-secondary: #6b21a8;
+            --shadow: 0 10px 40px rgba(0, 153, 204, 0.15);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+            transition: var(--transition);
+        }
+
+        /* ============================================
+           NAVIGATION
+        ============================================ */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(10, 14, 39, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 5%;
+            z-index: 1000;
+            box-shadow: 0 2px 20px rgba(0, 212, 255, 0.1);
+            transition: var(--transition);
+        }
+
+        [data-theme="light"] nav {
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        nav .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 900;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--accent-primary);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent-gradient);
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover::after,
+        .nav-links a.active::after {
+            width: 100%;
+        }
+
+        #darkModeToggle {
+            background: var(--bg-card);
+            border: 2px solid var(--accent-primary);
+            color: var(--text-primary);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 1rem;
+        }
+
+        #darkModeToggle:hover {
+            background: var(--accent-primary);
+            transform: scale(1.05);
+        }
+
+        .mobile-menu {
+            display: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-primary);
+        }
+
+        /* ============================================
+           HERO SECTION
+        ============================================ */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-primary);
+            position: relative;
+            overflow: hidden;
+            padding: 6rem 5% 2rem;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(0, 212, 255, 0.15) 0%, transparent 70%);
+            animation: pulse 8s ease-in-out infinite;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: -50%;
+            left: -20%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(123, 47, 247, 0.15) 0%, transparent 70%);
+            animation: pulse 10s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.2); opacity: 0.8; }
+        }
+
+        .hero-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            text-align: center;
+            z-index: 1;
+        }
+
+        .hero h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(2.5rem, 6vw, 5rem);
+            font-weight: 900;
+            margin-bottom: 1.5rem;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .hero p {
+            font-size: clamp(1.1rem, 2vw, 1.4rem);
+            color: var(--text-secondary);
+            margin-bottom: 2.5rem;
+            animation: fadeInUp 1s ease-out 0.2s backwards;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeInUp 1s ease-out 0.4s backwards;
+        }
+
+        .btn {
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            border: none;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: var(--accent-gradient);
+            color: white;
+            box-shadow: var(--shadow);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 50px rgba(0, 212, 255, 0.4);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-primary);
+            border: 2px solid var(--accent-primary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--accent-primary);
+            transform: translateY(-3px);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ============================================
+           SECTIONS
+        ============================================ */
+        section {
+            padding: 5rem 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(2rem, 4vw, 3rem);
+            text-align: center;
+            margin-bottom: 3rem;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* ============================================
+           CITY MAP
+        ============================================ */
+        .city-map-container {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .city-map {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .map-location {
+            background: var(--bg-secondary);
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            border: 2px solid transparent;
+        }
+
+        .map-location:hover {
+            transform: translateY(-10px);
+            border-color: var(--accent-primary);
+            box-shadow: var(--shadow);
+        }
+
+        .map-location i {
+            font-size: 3rem;
+            color: var(--accent-primary);
+            margin-bottom: 1rem;
+        }
+
+        .map-location h3 {
+            margin-bottom: 0.5rem;
+            font-size: 1.3rem;
+        }
+
+        .map-location p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        /* ============================================
+           NEWS SLIDER
+        ============================================ */
+        .news-slider-container {
+            position: relative;
+            overflow: hidden;
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .news-slider {
+            display: flex;
+            transition: transform 0.5s ease;
+        }
+
+        .news-slide {
+            min-width: 100%;
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .news-image {
+            width: 40%;
+            height: 300px;
+            background: var(--accent-gradient);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5rem;
+            color: white;
+        }
+
+        .news-content {
+            flex: 1;
+        }
+
+        .news-content h3 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .news-content .date {
+            color: var(--accent-primary);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .news-content p {
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+
+        .slider-controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .slider-btn {
+            background: var(--accent-primary);
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 1.2rem;
+        }
+
+        .slider-btn:hover {
+            transform: scale(1.1);
+            background: var(--accent-secondary);
+        }
+
+        /* ============================================
+           EVENT CALENDAR
+        ============================================ */
+        .calendar-container {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .calendar-header h3 {
+            font-size: 1.8rem;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .calendar-nav {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .calendar-nav button {
+            background: var(--accent-primary);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .calendar-nav button:hover {
+            transform: scale(1.1);
+            background: var(--accent-secondary);
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 1rem;
+        }
+
+        .calendar-day-label {
+            text-align: center;
+            font-weight: 600;
+            color: var(--accent-primary);
+            padding: 0.5rem;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-secondary);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .calendar-day:hover {
+            background: var(--accent-primary);
+            transform: scale(1.05);
+        }
+
+        .calendar-day.has-event::after {
+            content: '';
+            position: absolute;
+            bottom: 5px;
+            width: 6px;
+            height: 6px;
+            background: var(--accent-secondary);
+            border-radius: 50%;
+        }
+
+        .calendar-day.empty {
+            background: transparent;
+            cursor: default;
+        }
+
+        .calendar-day.empty:hover {
+            transform: none;
+        }
+
+        .event-list {
+            margin-top: 2rem;
+            display: grid;
+            gap: 1rem;
+        }
+
+        .event-item {
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            border-radius: 10px;
+            border-left: 4px solid var(--accent-primary);
+            transition: var(--transition);
+        }
+
+        .event-item:hover {
+            transform: translateX(10px);
+            box-shadow: var(--shadow);
+        }
+
+        .event-item h4 {
+            margin-bottom: 0.5rem;
+            color: var(--accent-primary);
+        }
+
+        .event-item .event-time {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        /* ============================================
+           WEATHER WIDGET
+        ============================================ */
+        .weather-container {
+            background: var(--accent-gradient);
+            border-radius: 20px;
+            padding: 2rem;
+            color: white;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+
+        .weather-icon {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+        }
+
+        .weather-temp {
+            font-size: 4rem;
+            font-weight: 700;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .weather-desc {
+            font-size: 1.3rem;
+            margin: 1rem 0;
+            opacity: 0.9;
+        }
+
+        .weather-details {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 2rem;
+            gap: 1rem;
+        }
+
+        .weather-detail {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .weather-detail i {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* ============================================
+           MODAL
+        ============================================ */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 3rem;
+            max-width: 500px;
+            width: 100%;
+            position: relative;
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 2rem;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: var(--transition);
+        }
+
+        .modal-close:hover {
+            color: var(--accent-primary);
+            transform: rotate(90deg);
+        }
+
+        .modal h2 {
+            font-family: 'Orbitron', sans-serif;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 1rem;
+            border-radius: 10px;
+            border: 2px solid var(--bg-secondary);
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+        }
+
+        .modal-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .modal-tab {
+            flex: 1;
+            padding: 1rem;
+            background: var(--bg-secondary);
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .modal-tab.active {
+            background: var(--accent-gradient);
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* ============================================
+           CONTACT FORM
+        ============================================ */
+        .contact-container {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: var(--shadow);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .contact-form .form-group textarea {
+            width: 100%;
+            padding: 1rem;
+            border-radius: 10px;
+            border: 2px solid var(--bg-secondary);
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+            min-height: 150px;
+            resize: vertical;
+            transition: var(--transition);
+        }
+
+        .contact-form .form-group textarea:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+        }
+
+        .form-error {
+            color: #ff4444;
+            font-size: 0.9rem;
+            margin-top: 0.3rem;
+            display: none;
+        }
+
+        .form-success {
+            background: #4caf50;
+            color: white;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        /* ============================================
+           SCROLL TO TOP
+        ============================================ */
+        .scroll-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 50px;
+            height: 50px;
+            background: var(--accent-gradient);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            opacity: 0;
+            pointer-events: none;
+            transition: var(--transition);
+            z-index: 999;
+            box-shadow: var(--shadow);
+        }
+
+        .scroll-to-top.visible {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .scroll-to-top:hover {
+            transform: translateY(-5px);
+        }
+
+        /* ============================================
+           COOKIE BANNER
+        ============================================ */
+        .cookie-banner {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-card);
+            padding: 1.5rem 5%;
+            box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.3);
+            z-index: 1500;
+            transform: translateY(100%);
+            transition: var(--transition);
+        }
+
+        .cookie-banner.visible {
+            transform: translateY(0);
+        }
+
+        .cookie-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .cookie-text {
+            flex: 1;
+        }
+
+        .cookie-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        /* ============================================
+           FOOTER
+        ============================================ */
+        footer {
+            background: var(--bg-secondary);
+            padding: 3rem 5%;
+            text-align: center;
+            border-top: 1px solid var(--accent-primary);
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .social-links a {
+            color: var(--text-secondary);
+            font-size: 1.5rem;
+            transition: var(--transition);
+        }
+
+        .social-links a:hover {
+            color: var(--accent-primary);
+            transform: translateY(-3px);
+        }
+
+        /* ============================================
+           RESPONSIVE
+        ============================================ */
+        @media (max-width: 968px) {
+            .nav-links {
+                position: fixed;
+                top: 70px;
+                left: -100%;
+                flex-direction: column;
+                background: var(--bg-card);
+                width: 100%;
+                padding: 2rem;
+                transition: var(--transition);
+            }
+
+            .nav-links.active {
+                left: 0;
+            }
+
+            .mobile-menu {
+                display: block;
+            }
+
+            .news-slide {
+                flex-direction: column;
+            }
+
+            .news-image {
+                width: 100%;
+                height: 200px;
+            }
+
+            .calendar-grid {
+                gap: 0.5rem;
+            }
+
+            .cookie-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .weather-details {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .cta-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            section {
+                padding: 3rem 5%;
+            }
+
+            .modal-content {
+                padding: 2rem;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div>
-    <div id="scoreboard">0 : 0</div>
-    <canvas id="pongCanvas" width="700" height="400"></canvas>
-  </div>
-  <script>
-    const canvas = document.getElementById('pongCanvas');
-    const ctx = canvas.getContext('2d');
-    const scoreboard = document.getElementById('scoreboard');
+    <!-- Navigation -->
+    <nav>
+        <div class="container">
+            <div class="logo">
+                <i class="fas fa-city"></i> FutureCity
+            </div>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#home" class="active">Home</a></li>
+                <li><a href="#map">Stadtplan</a></li>
+                <li><a href="#news">News</a></li>
+                <li><a href="#events">Events</a></li>
+                <li><a href="#weather">Wetter</a></li>
+                <li><a href="#contact">Kontakt</a></li>
+                <li><button id="darkModeToggle"><i class="fas fa-moon"></i></button></li>
+                <li><button class="btn btn-primary" id="loginBtn">Login</button></li>
+            </ul>
+            <div class="mobile-menu" id="mobileMenu">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </nav>
 
-    // Game variables
-    const paddleWidth = 12, paddleHeight = 80;
-    const ballRadius = 9;
-    const fieldWidth = canvas.width, fieldHeight = canvas.height;
-    const playerX = 10, computerX = fieldWidth - paddleWidth - 10;
-    let playerY = (fieldHeight - paddleHeight) / 2;
-    let computerY = (fieldHeight - paddleHeight) / 2;
-    let playerScore = 0, computerScore = 0;
-    let ball = {
-      x: fieldWidth/2,
-      y: fieldHeight/2,
-      speed: 5,
-      dx: 5 * (Math.random() > 0.5 ? 1 : -1),
-      dy: 3 * (Math.random() > 0.5 ? 1 : -1)
-    };
-    let upPressed = false, downPressed = false;
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <h1>Willkommen in Future City</h1>
+            <p>Erlebe die intelligente Stadt der Zukunft – nachhaltig, vernetzt und lebenswert für alle Bürger</p>
+            <div class="cta-buttons">
+                <a href="#map" class="btn btn-primary">
+                    <i class="fas fa-map-marked-alt"></i> Stadt erkunden
+                </a>
+                <a href="#events" class="btn btn-secondary">
+                    <i class="fas fa-calendar"></i> Events ansehen
+                </a>
+            </div>
+        </div>
+    </section>
 
-    // Mouse control for player paddle
-    canvas.addEventListener('mousemove', function(e) {
-      const rect = canvas.getBoundingClientRect();
-      let mouseY = e.clientY - rect.top;
-      playerY = mouseY - paddleHeight / 2;
-      clampPlayerPaddle();
-    });
+    <!-- City Map Section -->
+    <section id="map">
+        <h2 class="section-title">Interaktiver Stadtplan</h2>
+        <div class="city-map-container">
+            <div class="city-map">
+                <div class="map-location" data-location="energie">
+                    <i class="fas fa-solar-panel"></i>
+                    <h3>Energiezentrum</h3>
+                    <p>100% erneuerbare Energien durch Solarkraft und Windenergie</p>
+                </div>
+                <div class="map-location" data-location="verkehr">
+                    <i class="fas fa-train"></i>
+                    <h3>Verkehrsnetz</h3>
+                    <p>Autonome Verkehrssysteme und emissionsfreie öffentliche Verkehrsmittel</p>
+                </div>
+                <div class="map-location" data-location="bildung">
+                    <i class="fas fa-graduation-cap"></i>
+                    <h3>Bildungscampus</h3>
+                    <p>Moderne Bildungseinrichtungen mit KI-gestütztem Lernen</p>
+                </div>
+                <div class="map-location" data-location="gesundheit">
+                    <i class="fas fa-hospital"></i>
+                    <h3>Gesundheitszentrum</h3>
+                    <p>Telemedizin und KI-basierte Diagnostik für optimale Versorgung</p>
+                </div>
+                <div class="map-location" data-location="gruen">
+                    <i class="fas fa-tree"></i>
+                    <h3>Grünflächen</h3>
+                    <p>Vertikale Gärten und urbane Farmen für frische Luft</p>
+                </div>
+                <div class="map-location" data-location="smart">
+                    <i class="fas fa-microchip"></i>
+                    <h3>Smart Hub</h3>
+                    <p>Zentrale für IoT-Vernetzung und Datenanalyse</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    // Keyboard control for player paddle
-    document.addEventListener('keydown', function(e) {
-      if (e.key === "ArrowUp") upPressed = true;
-      if (e.key === "ArrowDown") downPressed = true;
-    });
-    document.addEventListener('keyup', function(e) {
-      if (e.key === "ArrowUp") upPressed = false;
-      if (e.key === "ArrowDown") downPressed = false;
-    });
+    <!-- News Slider Section -->
+    <section id="news">
+        <h2 class="section-title">Aktuelle Nachrichten</h2>
+        <div class="news-slider-container">
+            <div class="news-slider" id="newsSlider">
+                <div class="news-slide">
+                    <div class="news-image">
+                        <i class="fas fa-rocket"></i>
+                    </div>
+                    <div class="news-content">
+                        <div class="date">05. Oktober 2025</div>
+                        <h3>Neue autonome Drohnen-Lieferung gestartet</h3>
+                        <p>Future City führt als erste Stadt in Europa ein flächendeckendes autonomes Drohnen-Liefersystem ein. Pakete erreichen ihr Ziel nun innerhalb von 30 Minuten – emissionsfrei und effizient. Der Bürgermeister bezeichnet dies als Meilenstein für urbane Logistik.</p>
+                    </div>
+                </div>
+                <div class="news-slide">
+                    <div class="news-image">
+                        <i class="fas fa-leaf"></i>
+                    </div>
+                    <div class="news-content">
+                        <div class="date">02. Oktober 2025</div>
+                        <h3>Vertikale Farmen produzieren 50% mehr</h3>
+                        <p>Die vertikalen Stadtfarmen in Future City haben ihre Produktionskapazität um 50% gesteigert. Dank neuester LED-Technologie und KI-gesteuerter Bewässerung können nun noch mehr
+                    
+ frische Lebensmittel direkt in der Stadt angebaut werden, was Transport und CO2-Emissionen drastisch reduziert.</p>
+                    </div>
+                </div>
+                <div class="news-slide">
+                    <div class="news-image">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <div class="news-content">
+                        <div class="date">28. September 2025</div>
+                        <h3>KI-Assistenten für alle Bürger verfügbar</h3>
+                        <p>Ab sofort steht jedem Einwohner von Future City ein persönlicher KI-Assistent zur Verfügung. Dieser hilft bei Behördengängen, Terminvereinbarungen und beantwortet Fragen zur Stadt in Echtzeit. Die Datenschutz-Standards entsprechen höchsten europäischen Richtlinien.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="slider-controls">
+                <button class="slider-btn" id="prevSlide"><i class="fas fa-chevron-left"></i></button>
+                <button class="slider-btn" id="nextSlide"><i class="fas fa-chevron-right"></i></button>
+            </div>
+        </div>
+    </section>
 
-    function clampPlayerPaddle() {
-      if (playerY < 0) playerY = 0;
-      if (playerY > fieldHeight - paddleHeight) playerY = fieldHeight - paddleHeight;
-    }
+    <!-- Events Calendar Section -->
+    <section id="events">
+        <h2 class="section-title">Event-Kalender</h2>
+        <div class="calendar-container">
+            <div class="calendar-header">
+                <h3 id="currentMonth">Oktober 2025</h3>
+                <div class="calendar-nav">
+                    <button id="prevMonth"><i class="fas fa-chevron-left"></i></button>
+                    <button id="nextMonth"><i class="fas fa-chevron-right"></i></button>
+                </div>
+            </div>
+            <div class="calendar-grid" id="calendarGrid">
+                <!-- Calendar will be generated by JavaScript -->
+            </div>
+            <div class="event-list">
+                <div class="event-item">
+                    <h4><i class="fas fa-music"></i> Future Festival</h4>
+                    <div class="event-time">12. Oktober 2025, 18:00 - 23:00 Uhr</div>
+                    <p>Großes Musikfestival mit internationalen Künstlern im Stadtpark</p>
+                </div>
+                <div class="event-item">
+                    <h4><i class="fas fa-flask"></i> Tech Innovation Day</h4>
+                    <div class="event-time">18. Oktober 2025, 09:00 - 17:00 Uhr</div>
+                    <p>Präsentation neuester Technologien und Start-up Pitches</p>
+                </div>
+                <div class="event-item">
+                    <h4><i class="fas fa-running"></i> Smart City Marathon</h4>
+                    <div class="event-time">25. Oktober 2025, 08:00 - 14:00 Uhr</div>
+                    <p>Laufen durch die schönsten Ecken von Future City</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    function clampComputerPaddle() {
-      if (computerY < 0) computerY = 0;
-      if (computerY > fieldHeight - paddleHeight) computerY = fieldHeight - paddleHeight;
-    }
+    <!-- Weather Section -->
+    <section id="weather">
+        <h2 class="section-title">Aktuelles Wetter</h2>
+        <div class="weather-container">
+            <div class="weather-icon" id="weatherIcon">
+                <i class="fas fa-sun"></i>
+            </div>
+            <div class="weather-temp" id="weatherTemp">22°C</div>
+            <div class="weather-desc" id="weatherDesc">Sonnig und angenehm</div>
+            <div class="weather-details">
+                <div class="weather-detail">
+                    <i class="fas fa-wind"></i>
+                    <div>Wind</div>
+                    <div id="windSpeed">12 km/h</div>
+                </div>
+                <div class="weather-detail">
+                    <i class="fas fa-tint"></i>
+                    <div>Luftfeuchtigkeit</div>
+                    <div id="humidity">65%</div>
+                </div>
+                <div class="weather-detail">
+                    <i class="fas fa-eye"></i>
+                    <div>Sicht</div>
+                    <div id="visibility">10 km</div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    function drawRect(x, y, w, h, color) {
-      ctx.fillStyle = color;
-      ctx.fillRect(x, y, w, h);
-    }
+    <!-- Contact Section -->
+    <section id="contact">
+        <h2 class="section-title">Kontakt</h2>
+        <div class="contact-container">
+            <div class="form-success" id="formSuccess">
+                <i class="fas fa-check-circle"></i> Ihre Nachricht wurde erfolgreich gesendet!
+            </div>
+            <form class="contact-form" id="contactForm">
+                <div class="form-group">
+                    <label for="contactName">Name *</label>
+                    <input type="text" id="contactName" required>
+                    <div class="form-error" id="nameError">Bitte geben Sie Ihren Namen ein</div>
+                </div>
+                <div class="form-group">
+                    <label for="contactEmail">E-Mail *</label>
+                    <input type="email" id="contactEmail" required>
+                    <div class="form-error" id="emailError">Bitte geben Sie eine gültige E-Mail ein</div>
+                </div>
+                <div class="form-group">
+                    <label for="contactSubject">Betreff *</label>
+                    <input type="text" id="contactSubject" required>
+                    <div class="form-error" id="subjectError">Bitte geben Sie einen Betreff ein</div>
+                </div>
+                <div class="form-group">
+                    <label for="contactMessage">Nachricht *</label>
+                    <textarea id="contactMessage" required></textarea>
+                    <div class="form-error" id="messageError">Bitte geben Sie eine Nachricht ein</div>
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-paper-plane"></i> Nachricht senden
+                </button>
+            </form>
+        </div>
+    </section>
 
-    function drawCircle(x, y, r, color) {
-      ctx.fillStyle = color;
-      ctx.beginPath();
-      ctx.arc(x, y, r, 0, Math.PI*2, false);
-      ctx.closePath();
-      ctx.fill();
-    }
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="logo" style="margin-bottom: 1rem;">
+                <i class="fas fa-city"></i> FutureCity
+            </div>
+            <p>Die smarte Stadt der Zukunft – Nachhaltig, vernetzt, lebenswert</p>
+            <div class="social-links">
+                <a href="#"><i class="fab fa-facebook"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-linkedin"></i></a>
+                <a href="#"><i class="fab fa-youtube"></i></a>
+            </div>
+            <p style="color: var(--text-secondary); font-size: 0.9rem;">
+                © 2025 Future City. Alle Rechte vorbehalten.
+            </p>
+        </div>
+    </footer>
 
-    function drawNet() {
-      ctx.fillStyle = "#fff";
-      for (let i = 0; i < fieldHeight; i += 30) {
-        ctx.fillRect(fieldWidth/2 - 1, i, 2, 15);
-      }
-    }
+    <!-- Login/Register Modal -->
+    <div class="modal" id="authModal">
+        <div class="modal-content">
+            <span class="modal-close" id="closeModal">&times;</span>
+            <h2>Willkommen zurück</h2>
+            <div class="modal-tabs">
+                <button class="modal-tab active" data-tab="login">Login</button>
+                <button class="modal-tab" data-tab="register">Registrieren</button>
+            </div>
+            <div class="tab-content active" id="loginTab">
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="loginEmail">E-Mail</label>
+                        <input type="email" id="loginEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">Passwort</label>
+                        <input type="password" id="loginPassword" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">
+                        <i class="fas fa-sign-in-alt"></i> Anmelden
+                    </button>
+                </form>
+            </div>
+            <div class="tab-content" id="registerTab">
+                <form id="registerForm">
+                    <div class="form-group">
+                        <label for="registerName">Name</label>
+                        <input type="text" id="registerName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerEmail">E-Mail</label>
+                        <input type="email" id="registerEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerPassword">Passwort</label>
+                        <input type="password" id="registerPassword" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerPasswordConfirm">Passwort bestätigen</label>
+                        <input type="password" id="registerPasswordConfirm" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">
+                        <i class="fas fa-user-plus"></i> Registrieren
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
 
-    function draw() {
-      // Clear field
-      drawRect(0, 0, fieldWidth, fieldHeight, "#111");
+    <!-- Scroll to Top Button -->
+    <button class="scroll-to-top" id="scrollToTop">
+        <i class="fas fa-arrow-up"></i>
+    </button>
 
-      // Draw net
-      drawNet();
+    <!-- Cookie Banner -->
+    <div class="cookie-banner" id="cookieBanner">
+        <div class="cookie-content">
+            <div class="cookie-text">
+                <strong>🍪 Wir verwenden Cookies</strong>
+                <p>Diese Website verwendet Cookies, um Ihr Erlebnis zu verbessern. Durch die weitere Nutzung stimmen Sie unserer Cookie-Richtlinie zu.</p>
+            </div>
+            <div class="cookie-buttons">
+                <button class="btn btn-secondary" id="cookieDecline">Ablehnen</button>
+                <button class="btn btn-primary" id="cookieAccept">Akzeptieren</button>
+            </div>
+        </div>
+    </div>
 
-      // Draw paddles
-      drawRect(playerX, playerY, paddleWidth, paddleHeight, "#0ff");
-      drawRect(computerX, computerY, paddleWidth, paddleHeight, "#f00");
+    <script>
+        // ============================================
+        // DARK MODE TOGGLE
+        // ============================================
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const body = document.body;
+        
+        // Check saved theme preference
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        body.setAttribute('data-theme', savedTheme);
+        updateDarkModeIcon();
 
-      // Draw ball
-      drawCircle(ball.x, ball.y, ballRadius, "#fff");
-    }
+        darkModeToggle.addEventListener('click', () => {
+            const currentTheme = body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            body.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateDarkModeIcon();
+        });
 
-    function resetBall() {
-      ball.x = fieldWidth/2;
-      ball.y = fieldHeight/2;
-      ball.speed = 5;
-      // Random direction
-      ball.dx = 5 * (Math.random() > 0.5 ? 1 : -1);
-      ball.dy = 3 * (Math.random() > 0.5 ? 1 : -1);
-    }
+        function updateDarkModeIcon() {
+            const theme = body.getAttribute('data-theme');
+            const icon = darkModeToggle.querySelector('i');
+            icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        }
 
-    function updateScoreboard() {
-      scoreboard.textContent = `${playerScore} : ${computerScore}`;
-    }
+        // ============================================
+        // MOBILE MENU
+        // ============================================
+        const mobileMenu = document.getElementById('mobileMenu');
+        const navLinks = document.getElementById('navLinks');
 
-    function update() {
-      // Move player paddle with keyboard
-      if (upPressed) {
-        playerY -= 6;
-        clampPlayerPaddle();
-      }
-      if (downPressed) {
-        playerY += 6;
-        clampPlayerPaddle();
-      }
+        mobileMenu.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            const icon = mobileMenu.querySelector('i');
+            icon.className = navLinks.classList.contains('active') ? 'fas fa-times' : 'fas fa-bars';
+        });
 
-      // Move computer paddle
-      let compCenter = computerY + paddleHeight/2;
-      if (compCenter < ball.y - 18) computerY += 4;
-      else if (compCenter > ball.y + 18) computerY -= 4;
-      clampComputerPaddle();
+        // Close mobile menu when clicking a link
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('active');
+                const icon = mobileMenu.querySelector('i');
+                icon.className = 'fas fa-bars';
+            });
+        });
 
-      // Move ball
-      ball.x += ball.dx;
-      ball.y += ball.dy;
+        // ============================================
+        // ACTIVE NAVIGATION ON SCROLL
+        // ============================================
+        const sections = document.querySelectorAll('section[id]');
+        const navLinksAll = document.querySelectorAll('.nav-links a');
 
-      // Top/bottom collision
-      if (ball.y - ballRadius < 0 || ball.y + ballRadius > fieldHeight) {
-        ball.dy = -ball.dy;
-      }
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (scrollY >= (sectionTop - 200)) {
+                    current = section.getAttribute('id');
+                }
+            });
 
-      // Left paddle collision
-      if (
-        ball.x - ballRadius < playerX + paddleWidth &&
-        ball.y > playerY &&
-        ball.y < playerY + paddleHeight
-      ) {
-        ball.x = playerX + paddleWidth + ballRadius; // prevent sticking
-        // Calculate new direction depending on where it hits the paddle
-        let collidePoint = (ball.y - (playerY + paddleHeight/2)) / (paddleHeight/2);
-        let angle = collidePoint * Math.PI/4; // max 45 deg
-        let direction = 1;
-        ball.dx = direction * ball.speed * Math.cos(angle);
-        ball.dy = ball.speed * Math.sin(angle);
-        ball.speed += 0.5;
-      }
+            navLinksAll.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${current}`) {
+                    link.classList.add('active');
+                }
+            });
+        });
 
-      // Right paddle collision
-      if (
-        ball.x + ballRadius > computerX &&
-        ball.y > computerY &&
-        ball.y < computerY + paddleHeight
-      ) {
-        ball.x = computerX - ballRadius; // prevent sticking
-        let collidePoint = (ball.y - (computerY + paddleHeight/2)) / (paddleHeight/2);
-        let angle = collidePoint * Math.PI/4;
-        let direction = -1;
-        ball.dx = direction * ball.speed * Math.cos(angle);
-        ball.dy = ball.speed * Math.sin(angle);
-        ball.speed += 0.5;
-      }
+        // ============================================
+        // NEWS SLIDER
+        // ============================================
+        const newsSlider = document.getElementById('newsSlider');
+        const prevSlide = document.getElementById('prevSlide');
+        const nextSlide = document.getElementById('nextSlide');
+        let currentSlide = 0;
+        const totalSlides = document.querySelectorAll('.news-slide').length;
 
-      // Score
-      if (ball.x - ballRadius < 0) {
-        computerScore++;
-        updateScoreboard();
-        resetBall();
-      } else if (ball.x + ballRadius > fieldWidth) {
-        playerScore++;
-        updateScoreboard();
-        resetBall();
-      }
-    }
+        function updateSlider() {
+            newsSlider.style.transform = `translateX(-${currentSlide * 100}%)`;
+        }
 
-    function gameLoop() {
-      update();
-      draw();
-      requestAnimationFrame(gameLoop);
-    }
+        nextSlide.addEventListener('click', () => {
+            currentSlide = (currentSlide + 1) % totalSlides;
+            updateSlider();
+        });
 
-    // Start game
-    updateScoreboard();
-    gameLoop();
-  </script>
+        prevSlide.addEventListener('click', () => {
+            currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+            updateSlider();
+        });
+
+        // Auto-advance slider
+        setInterval(() => {
+            currentSlide = (currentSlide + 1) % totalSlides;
+            updateSlider();
+        }, 7000);
+
+        // ============================================
+        // CALENDAR
+        // ============================================
+        const calendarGrid = document.getElementById('calendarGrid');
+        const currentMonthEl = document.getElementById('currentMonth');
+        const prevMonthBtn = document.getElementById('prevMonth');
+        const nextMonthBtn = document.getElementById('nextMonth');
+
+        let currentDate = new Date(2025, 9, 1); // October 2025
+        const eventDays = [12, 18, 25]; // Days with events
+
+        function generateCalendar(year, month) {
+            calendarGrid.innerHTML = '';
+            
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            
+            const monthNames = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 
+                               'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
+            currentMonthEl.textContent = `${monthNames[month]} ${year}`;
+
+            // Day labels
+            const dayLabels = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
+            dayLabels.forEach(day => {
+                const label = document.createElement('div');
+                label.className = 'calendar-day-label';
+                label.textContent = day;
+                calendarGrid.appendChild(label);
+            });
+
+            // Empty cells for alignment (Monday start)
+            const adjustedFirstDay = firstDay === 0 ? 6 : firstDay - 1;
+            for (let i = 0; i < adjustedFirstDay; i++) {
+                const emptyDay = document.createElement('div');
+                emptyDay.className = 'calendar-day empty';
+                calendarGrid.appendChild(emptyDay);
+            }
+
+            // Days of month
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayEl = document.createElement('div');
+                dayEl.className = 'calendar-day';
+                dayEl.textContent = day;
+                
+                if (eventDays.includes(day)) {
+                    dayEl.classList.add('has-event');
+                }
+                
+                calendarGrid.appendChild(dayEl);
+            }
+        }
+
+        prevMonthBtn.addEventListener('click', () => {
+            currentDate.setMonth(currentDate.getMonth() - 1);
+            generateCalendar(currentDate.getFullYear(), currentDate.getMonth());
+        });
+
+        nextMonthBtn.addEventListener('click', () => {
+            currentDate.setMonth(currentDate.getMonth() + 1);
+            generateCalendar(currentDate.getFullYear(), currentDate.getMonth());
+        });
+
+        generateCalendar(currentDate.getFullYear(), currentDate.getMonth());
+
+        // ============================================
+        // WEATHER (with dummy data)
+        // ============================================
+        const weatherData = {
+            temp: 22,
+            description: 'Sonnig und angenehm',
+            icon: 'fa-sun',
+            wind: 12,
+            humidity: 65,
+            visibility: 10
+        };
+
+        function updateWeather() {
+            document.getElementById('weatherTemp').textContent = `${weatherData.temp}°C`;
+            document.getElementById('weatherDesc').textContent = weatherData.description;
+            document.getElementById('weatherIcon').innerHTML = `<i class="fas ${weatherData.icon}"></i>`;
+            document.getElementById('windSpeed').textContent = `${weatherData.wind} km/h`;
+            document.getElementById('humidity').textContent = `${weatherData.humidity}%`;
+            document.getElementById('visibility').textContent = `${weatherData.visibility} km`;
+        }
+
+        updateWeather();
+
+        // Simulate weather changes
+        setInterval(() => {
+            const temps = [18, 20, 22, 24, 26];
+            const descs = ['Sonnig und angenehm', 'Teilweise bewölkt', 'Leicht bewölkt', 'Klar und heiter'];
+            const icons = ['fa-sun', 'fa-cloud-sun', 'fa-cloud'];
+            
+            weatherData.temp = temps[Math.floor(Math.random() * temps.length)];
+            weatherData.description = descs[Math.floor(Math.random() * descs.length)];
+            weatherData.icon = icons[Math.floor(Math.random() * icons.length)];
+            weatherData.wind = Math.floor(Math.random() * 20) + 5;
+            weatherData.humidity = Math.floor(Math.random() * 40) + 40;
+            
+            updateWeather();
+        }, 30000);
+
+        // ============================================
+        // AUTH MODAL
+        // ============================================
+        const authModal = document.getElementById('authModal');
+        const loginBtn = document.getElementById('loginBtn');
+        const closeModal = document.getElementById('closeModal');
+        const modalTabs = document.querySelectorAll('.modal-tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        loginBtn.addEventListener('click', () => {
+            authModal.classList.add('active');
+        });
+
+        closeModal.addEventListener('click', () => {
+            authModal.classList.remove('active');
+        });
+
+        authModal.addEventListener('click', (e) => {
+            if (e.target === authModal) {
+                authModal.classList.remove('active');
+            }
+        });
+
+        modalTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const targetTab = tab.getAttribute('data-tab');
+                
+                modalTabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                tabContents.forEach(content => {
+                    content.classList.remove('active');
+                    if (content.id === `${targetTab}Tab`) {
+                        content.classList.add('active');
+                    }
+                });
+            });
+        });
+
+        // Login form
+        document.getElementById('loginForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert('Login erfolgreich! (Demo)');
+            authModal.classList.remove('active');
+        });
+
+        // Register form
+        document.getElementById('registerForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('registerPasswordConfirm').value;
+            
+            if (password !== confirmPassword) {
+                alert('Passwörter stimmen nicht überein!');
+                return;
+            }
+            
+            alert('Registrierung erfolgreich! (Demo)');
+            authModal.classList.remove('active');
+        });
+
+        // ============================================
+        // CONTACT FORM VALIDATION
+        // ============================================
+        const contactForm = document.getElementById('contactForm');
+        const formSuccess = document.getElementById('formSuccess');
+
+        contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            let isValid = true;
+            
+            // Reset errors
+            document.querySelectorAll('.form-error').forEach(error => {
+                error.style.display = 'none';
+            });
+            
+            // Name validation
+            const name = document.getElementById('contactName').value.trim();
+            if (name.length < 2) {
+                document.getElementById('nameError').style.display = 'block';
+                isValid = false;
+            }
+            
+            // Email validation
+            const email = document.getElementById('contactEmail').value.trim();
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                document.getElementById('emailError').style.display = 'block';
+                isValid = false;
+            }
+            
+            // Subject validation
+            const subject = document.getElementById('contactSubject').value.trim();
+            if (subject.length < 3) {
+                document.getElementById('subjectError').style.display = 'block';
+                isValid = false;
+            }
+            
+            // Message validation
+            const message = document.getElementById('contactMessage').value.trim();
+            if (message.length < 10) {
+                document.getElementById('messageError').style.display = 'block';
+                isValid = false;
+            }
+            
+            if (isValid) {
+                formSuccess.style.display = 'block';
+                contactForm.reset();
+                
+                setTimeout(() => {
+                    formSuccess.style.display = 'none';
+                }, 5000);
+            }
+        });
+
+        // ============================================
+        // SCROLL TO TOP BUTTON
+        // ============================================
+        const scrollToTop = document.getElementById('scrollToTop');
+
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 500) {
+                scrollToTop.classList.add('visible');
+            } else {
+                scrollToTop.classList.remove('visible');
+            }
+        });
+
+        scrollToTop.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // ============================================
+        // COOKIE BANNER
+        // ============================================
+        const cookieBanner = document.getElementById('cookieBanner');
+        const cookieAccept = document.getElementById('cookieAccept');
+        const cookieDecline = document.getElementById('cookieDecline');
+
+        // Check if user has already responded to cookie banner
+        const cookieConsent = localStorage.getItem('cookieConsent');
+        if (!cookieConsent) {
+            setTimeout(() => {
+                cookieBanner.classList.add('visible');
+            }, 2000);
+        }
+
+        cookieAccept.addEventListener('click', () => {
+            localStorage.setItem('cookieConsent', 'accepted');
+            cookieBanner.classList.remove('visible');
+        });
+
+        cookieDecline.addEventListener('click', () => {
+            localStorage.setItem('cookieConsent', 'declined');
+            cookieBanner.classList.remove('visible');
+        });
+
+        // ============================================
+        // MAP LOCATION INTERACTIONS
+        // ============================================
+        const mapLocations = document.querySelectorAll('.map-location');
+        
+        mapLocations.forEach(location => {
+            location.addEventListener('click', () => {
+                const locationType = location.getAttribute('data-location');
+                const title = location.querySelector('h3').textContent;
+                const desc = location.querySelector('p').textContent;
+                
+                alert(`📍 ${title}\n\n${desc}\n\nMehr Informationen folgen in Kürze!`);
+            });
+        });
+
+        // ============================================
+        // SMOOTH REVEAL ON SCROLL
+        // ============================================
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('section').forEach(section => {
+            section.style.opacity = '0';
+            section.style.transform = 'translateY(30px)';
+            section.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(section);
+        });
+
+        // Initial reveal for hero
+        document.querySelector('.hero').style.opacity = '1';
+        document.querySelector('.hero').style.transform = 'translateY(0)';
+    </script>
 </body>
 </html>
+```
